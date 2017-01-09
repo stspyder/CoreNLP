@@ -35,6 +35,8 @@ import java.util.Map;
 import edu.stanford.nlp.coref.CorefCoreAnnotations;
 
 import edu.stanford.nlp.coref.data.CorefChain;
+import java.util.stream.IntStream;
+import org.ejml.simple.SimpleMatrix;
 
 /**
  * Output an Annotation to human readable JSON.
@@ -109,9 +111,16 @@ public class JSONOutputter extends AnnotationOutputter {
           Tree sentimentTree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
           if (sentimentTree != null) {
             int sentiment = RNNCoreAnnotations.getPredictedClass(sentimentTree);
+            SimpleMatrix matrix = RNNCoreAnnotations.getPredictions(sentimentTree);
             String sentimentClass = sentence.get(SentimentCoreAnnotations.SentimentClass.class);
+            
             l2.set("sentimentValue", Integer.toString(sentiment));
             l2.set("sentiment", sentimentClass.replaceAll(" ", ""));
+            l2.set("sentimentProba", IntStream.range(0, matrix.numRows())
+                    .mapToDouble(index -> Math.round(matrix.get(index, 0) * 100.0) / 100.0)
+                    .boxed()
+                    .collect(Collectors.toList())
+            );
           }
           // (openie)
           Collection<RelationTriple> openIETriples = sentence.get(NaturalLogicAnnotations.RelationTriplesAnnotation.class);

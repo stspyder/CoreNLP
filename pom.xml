@@ -145,6 +145,15 @@
   <build>
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>test/src</testSourceDirectory>
+    <resources>
+        <resource>
+            <directory>src/edu/stanford/nlp/pipeline/demo</directory>
+            <includes>
+                <include>**/*.js</include>
+            </includes>
+            <targetPath>edu/stanford/nlp/pipeline/demo</targetPath>
+        </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
